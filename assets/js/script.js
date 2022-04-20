@@ -56,9 +56,6 @@ var createTaskEl = function(taskDataObj) {
     var listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
 
-    // console.log(taskDataObj);
-    // console.log(taskDataObj.status);
-
     // add task id as a custom attribute
 
     listItemEl.setAttribute("data-task-id", taskIdCounter);
@@ -74,6 +71,7 @@ var createTaskEl = function(taskDataObj) {
     // the next two lines are to update arrays for local storage
     taskDataObj.id = taskIdCounter;
     tasks.push(taskDataObj);
+    saveTasks();
 
     var taskActionsEl = createTaskActions(taskIdCounter);
     listItemEl.appendChild(taskActionsEl);
@@ -205,6 +203,10 @@ var completeEditTask = function(taskName, taskType, taskId) {
 
   alert("Task Updated!");
 
+  // for local stirage
+  saveTasks();
+
+
   formEl.removeAttribute("data-task-id");
   document.querySelector("#save-task").textContent = "Add Task";
 
@@ -227,6 +229,9 @@ var deleteTask = function(taskId) {
       updatedTaskArr.push(tasks[i]);
     }
   }
+
+  // for local storage
+  saveTasks();
   
   // reassign tasks array to be the same as updatedTaskArr
   tasks = updatedTaskArr;
@@ -242,8 +247,7 @@ var taskStatusChangeHandler = function(event) {
 
   // find the parent task item element based on the id
   var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
-  //console.log(event.target);
-
+  
   if (statusValue === "to do") {
     tasksToDoEl.appendChild(taskSelected);
   }
@@ -262,9 +266,16 @@ var taskStatusChangeHandler = function(event) {
     }
   }
   
-  console.log(tasks);
+  
+  // for local storage
+  saveTasks();
   
 };
+
+
+var saveTasks = function() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
 
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
